@@ -1,22 +1,26 @@
 {
   "name": "DOPEBLOCK",
   "version": "0.0.1",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "Detail a workspace - block everything else.",
   "homepage_url": "https://cybertheory.github.io/dopeblock",
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "icons/D16.png",
+    "19": "icons/D19.png",
+    "48": "icons/D48.png",
+    "128": "icons/D128.png"
   },
   "default_locale": "en",
-  "background": {
-    "page": "src/bg/background.html",
-    "persistent": true
-  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*","http://*/*"],
+      "js": ["js/jquery/jquery.js", "src/content/content-script.js" ]
+    }
+  ],
+  "web_accessible_resources": [{"resources" : ["images/Dope.png"], "matches" : [ "https://*/*" , "http://*/*" ]}],
   "options_page": "src/options_custom/index.html",
-  "browser_action": {
-    "default_icon": "icons/icon19.png",
+  "action": {
+    "default_icon": "icons/D19.png",
     "default_title": "browser action demo",
     "default_popup": "src/browser_action/browser_action.html"
   },
@@ -26,6 +30,6 @@
     "tabs"
   ],
   "omnibox": {
-    "keyword": "extensionizr"
+    "keyword": "dopeblock"
   }
 }

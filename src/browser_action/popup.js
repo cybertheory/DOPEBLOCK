@@ -1,24 +1,60 @@
-$("#workspace").on("load", function(e) {
-    chrome.storage.sync.get({workspace}, function(data) {
-        e.text(data.workspace);
-    });
+chrome.storage.sync.get({'dopeon':false}, function(data) {
+    if(data.dopeon){
+        console.log("on!");
+        $("#checkbox").prop("checked", data.dopeon);
+    }
 });
 
-$("form").on('submit', function (e) {
+$("#checkbox").on('click', function() {
     //ajax call here
-    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-        chrome.storage.sync.get({workspace: new Set([])}, function(data) {
-            // data.links will be either the stored value, or defaultValue if nothing is set
-            let url = tabs[0].status == "complete" ? tabs[0].url : tabs[0].pendingUrl
-            chrome.storage.sync.set({workspace: data.workspace.add(url)}, function() {
-                chrome.storage.sync.get({workspace}, function(data) {
-                    console.log(data.workspace);
-                });
+    if($(this).is(':checked')){
+        // Checkbox is checked..
+        chrome.storage.sync.set({'dopeon': true}, function() {
+            chrome.storage.sync.get({'dopeon':false}, function(data) {
+                if(data.dopeon){
+                    console.log("on!");
+                }
             });
         });
-        // use `url` here inside the callback because it's asynchronous!
+    } else {
+        // Checkbox is not checked..
+        chrome.storage.sync.set({'dopeon': false}, function() {
+            chrome.storage.sync.get({'dopeon':false}, function(data) {
+                if(!data.dopeon){
+                    console.log("off!");
+                }
+            });
+        });
+    }
+
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        chrome.tabs.reload(tabs[0].id);
     });
+      
+            
     
     //stop form submission
     // e.preventDefault();
+ });
+$("#add").on('click', function (e) {
+    //ajax call here
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        console.log(tabs);
+        let url = tabs[0].status == "complete" ? tabs[0].url : tabs[0].pendingUrl;
+        let urlobj = new URL(url);
+        console.log(urlobj.hostname);
+        let hostname = urlobj.hostname.trim();
+        chrome.storage.sync.set({[hostname] : true}, function() {
+            console.log("setted!");
+            chrome.storage.sync.get({[hostname] : false}, function(data) {
+                if(data[hostname]){
+                    console.log("contains!");
+                } else {
+                    alert("something went wrong with adding to Workspace");
+                }
+            });
+        });
+        chrome.tabs.reload(tabs[0].id);
+    });
+    
  });
